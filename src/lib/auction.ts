@@ -1,0 +1,51 @@
+import type { AuctionStatus, Vehicle } from '../types/vehicle';
+
+const AUCTION_DURATION_MS = 2 * 60 * 60 * 1000;
+const WINDOW_START_OFFSET_MS = 2 * 60 * 60 * 1000;
+const WINDOW_END_OFFSET_MS = 7 * 24 * 60 * 60 * 1000;
+
+let normalizedMap: Map<string, Date> | null = null;
+
+function buildNormalizedMap(vehicles: Vehicle[]): Map<string, Date> {
+  const dates = vehicles
+    .map((v) => new Date(v.auction_start).getTime())
+    .filter((t) => !Number.isNaN(t));
+  const min = Math.min(...dates);
+  const max = Math.max(...dates);
+  const now = Date.now();
+  const targetStart = now - WINDOW_START_OFFSET_MS;
+  const targetEnd = now + WINDOW_END_OFFSET_MS;
+
+  const map = new Map<string, Date>();
+  for (const v of vehicles) {
+    const raw = new Date(v.auction_start).getTime();
+    const ratio = max === min ? 0.5 : (raw - min) / (max - min);
+    const normalized = targetStart + ratio * (targetEnd - targetStart);
+    map.set(v.id, new Date(normalized));
+  }
+  return map;
+}
+
+export function getNormalizedAuctionStart(vehicle: Vehicle, allVehicles: Vehicle[]): Date {
+  if (!normalizedMap) normalizedMap = buildNormalizedMap(allVehicles);
+  return normalizedMap.get(vehicle.id) ?? new Date(vehicle.auction_start);
+}
+
+export function getAuctionStatus(normalizedStart: Date, now = new Date()): AuctionStatus {
+  const start = normalizedStart.getTime();
+  const end = start + AUCTION_DURATION_MS;
+  const t = now.getTime();
+  if (t < start) return 'upcoming';
+  if (t >= start && t < end) return 'live';
+  return 'ended';
+}
+
+export function getTimeUntilAuctionLabel(status: AuctionStatus, normalizedStart: Date): string {
+  const now = Date.now();
+  if (status === 'live') return 'Live now';
+  if (status === 'ended') return 'Ended';
+  const diff = normalizedStart.getTime() - now;
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  return `Starts in ${hours}h ${mins}m`;
+}
