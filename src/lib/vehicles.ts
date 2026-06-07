@@ -19,10 +19,11 @@ export function searchVehicles(
   let result = [...vehicles]
 
   if (query.trim()) {
-    const q = query.trim().toLowerCase()
+    const escaped = query.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    const regex = new RegExp(`\\b${escaped}`, 'i')
     result = result.filter((v) => {
-      const haystack = `${v.year} ${v.make} ${v.model} ${v.trim} ${v.lot} ${v.selling_dealership} ${v.city}`.toLowerCase()
-      return haystack.includes(q)
+      const haystack = `${v.year} ${v.make} ${v.model} ${v.trim} ${v.lot} ${v.city}`
+      return regex.test(haystack)
     })
   }
 

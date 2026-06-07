@@ -26,17 +26,17 @@ export function PhotoGallery({ images, alt }: PhotoGalleryProps) {
   return (
     <div className="space-y-2">
       {/* Main image */}
-      <div className="aspect-[4/3] rounded-xl overflow-hidden bg-gray-100">
+      <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-gray-100">
         {activeImageSrc ? (
           <img
             key={activeIndex}
             src={activeImageSrc}
             alt={`${alt} — photo ${activeIndex + 1} of ${images.length}`}
-            className="w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover"
             onError={() => handleError(activeIndex)}
           />
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-gray-300">
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-gray-300">
             <svg className="w-16 h-16" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path
                 strokeLinecap="round"

@@ -12,7 +12,7 @@ function VehicleImage({ src, alt }: { src: string | null; alt: string }) {
 
   if (!src || errored) {
     return (
-      <div className="w-full h-full flex items-center justify-center bg-gray-100">
+      <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
         <svg
           className="w-12 h-12 text-gray-300"
           fill="none"
@@ -36,7 +36,7 @@ function VehicleImage({ src, alt }: { src: string | null; alt: string }) {
       src={src}
       alt={alt}
       loading="lazy"
-      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
       onError={() => setErrored(true)}
     />
   )
