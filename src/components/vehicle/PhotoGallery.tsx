@@ -11,21 +11,21 @@ export function PhotoGallery({ images, alt }: PhotoGalleryProps) {
   const safeImages = images.length > 0 ? images : [];
 
   return (
-    <div className="space-y-3">
-      <div className="aspect-[4/3] overflow-hidden rounded-xl bg-slate-200">
+    <div className="w-full min-w-0 max-w-full overflow-hidden">
+      <div className="aspect-[4/3] w-full max-w-full overflow-hidden rounded-lg bg-slate-200">
         {!mainError && safeImages[activeIndex] ? (
           <img
             src={safeImages[activeIndex]}
             alt={alt}
             onError={() => setMainError(true)}
-            className="h-full w-full object-cover"
+            className="h-full w-full max-w-full object-cover"
           />
         ) : (
           <div className="flex h-full items-center justify-center text-slate-500">No image available</div>
         )}
       </div>
       {safeImages.length > 1 && (
-        <div className="flex gap-2 overflow-x-auto pb-1">
+        <div className="mt-3 flex w-full max-w-full gap-2 overflow-x-auto overscroll-x-contain pb-1">
           {safeImages.map((src, i) => (
             <button
               key={src}
@@ -34,8 +34,8 @@ export function PhotoGallery({ images, alt }: PhotoGalleryProps) {
                 setActiveIndex(i);
                 setMainError(false);
               }}
-              className={`h-16 w-20 shrink-0 overflow-hidden rounded-lg border-2 ${
-                i === activeIndex ? 'border-[#1a1a2e]' : 'border-transparent'
+              className={`h-14 w-16 shrink-0 overflow-hidden rounded-md border-2 sm:h-16 sm:w-20 ${
+                i === activeIndex ? 'border-openlane-blue' : 'border-transparent'
               }`}
               aria-label={`View image ${i + 1}`}
             >

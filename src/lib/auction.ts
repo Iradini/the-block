@@ -45,7 +45,37 @@ export function getTimeUntilAuctionLabel(status: AuctionStatus, normalizedStart:
   if (status === 'live') return 'Live now';
   if (status === 'ended') return 'Ended';
   const diff = normalizedStart.getTime() - now;
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  if (days >= 1) return `Starts in ${days} day${days === 1 ? '' : 's'}`;
   const hours = Math.floor(diff / (1000 * 60 * 60));
   const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
   return `Starts in ${hours}h ${mins}m`;
+}
+
+export function getAuctionCountdown(
+  status: AuctionStatus,
+  normalizedStart: Date,
+  now = Date.now(),
+): string {
+  if (status === 'ended') return 'Ended';
+
+  if (status === 'live') {
+    const end = normalizedStart.getTime() + AUCTION_DURATION_MS;
+    const diff = Math.max(0, end - now);
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const secs = Math.floor((diff % (1000 * 60)) / 1000);
+    if (hours >= 24) {
+      const days = Math.floor(hours / 24);
+      return `${days} Day${days === 1 ? '' : 's'}`;
+    }
+    return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  }
+
+  const diff = normalizedStart.getTime() - now;
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  if (days >= 1) return `${days} Day${days === 1 ? '' : 's'}`;
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  return `${hours}h ${mins}m`;
 }

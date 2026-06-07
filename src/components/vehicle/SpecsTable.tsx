@@ -22,13 +22,15 @@ const rows = (vehicle: VehicleWithBids) => [
 
 export function SpecsTable({ vehicle }: SpecsTableProps) {
   return (
-    <section>
-      <h2 className="mb-3 text-lg font-semibold text-slate-900">Specifications</h2>
-      <dl className="divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white">
+    <section className="min-w-0">
+      <h2 className="section-title mb-3">Specifications</h2>
+      <dl className="card divide-y divide-openlane-border">
         {rows(vehicle).map(([label, value]) => (
-          <div key={label} className="flex justify-between gap-4 px-4 py-3 text-sm">
-            <dt className="text-slate-500">{label}</dt>
-            <dd className="text-right font-medium capitalize text-slate-900">{value}</dd>
+          <div key={label} className="flex min-w-0 justify-between gap-3 px-4 py-3 text-sm">
+            <dt className="shrink-0 text-slate-500">{label}</dt>
+            <dd className="min-w-0 break-words text-right font-medium capitalize text-openlane-navy">
+              {value}
+            </dd>
           </div>
         ))}
       </dl>

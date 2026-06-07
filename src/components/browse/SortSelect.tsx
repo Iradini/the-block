@@ -3,6 +3,7 @@ import type { VehicleSort } from '../../types/vehicle';
 interface SortSelectProps {
   value: VehicleSort;
   onChange: (sort: VehicleSort) => void;
+  className?: string;
 }
 
 const options: { value: VehicleSort; label: string }[] = [
@@ -14,13 +15,13 @@ const options: { value: VehicleSort; label: string }[] = [
   { value: 'condition_desc', label: 'Condition: Best' },
 ];
 
-export function SortSelect({ value, onChange }: SortSelectProps) {
+export function SortSelect({ value, onChange, className = '' }: SortSelectProps) {
   return (
     <select
       value={value}
       onChange={(e) => onChange(e.target.value as VehicleSort)}
       aria-label="Sort vehicles"
-      className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-[#1a1a2e] focus:outline-none focus:ring-1 focus:ring-[#1a1a2e]"
+      className={`input-field max-w-full ${className}`}
     >
       {options.map((opt) => (
         <option key={opt.value} value={opt.value}>

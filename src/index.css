@@ -1,12 +1,82 @@
 @import 'tailwindcss';
 
+@theme {
+  --color-openlane-navy: #00205b;
+  --color-openlane-navy-light: #1a3a6b;
+  --color-openlane-blue: #0056d2;
+  --color-openlane-blue-hover: #0047b3;
+  --color-openlane-bg: #f5f6f8;
+  --color-openlane-border: #e2e8f0;
+  --color-auction-dark: #1c1c1e;
+  --color-auction-green: #16a34a;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
 body {
   margin: 0;
   min-height: 100svh;
-  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+  overflow-x: hidden;
+  max-width: 100%;
+  font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
+  color: var(--color-openlane-navy);
+  background: var(--color-openlane-bg);
 }
 
 #root {
   min-height: 100svh;
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+@layer components {
+  .page-container {
+    @apply mx-auto w-full max-w-7xl min-w-0 px-4 sm:px-6;
+  }
+
+  .btn-primary {
+    @apply rounded-full bg-openlane-blue px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-openlane-blue-hover disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-secondary {
+    @apply rounded-full border border-openlane-border bg-white px-4 py-2.5 text-sm font-medium text-openlane-navy transition hover:bg-slate-50;
+  }
+
+  .btn-ghost {
+    @apply rounded-full border border-openlane-blue px-4 py-2.5 text-sm font-semibold text-openlane-blue transition hover:bg-openlane-blue/5;
+  }
+
+  .input-field {
+    @apply w-full min-w-0 rounded-lg border border-openlane-border bg-white px-3 py-2.5 text-sm text-openlane-navy focus:border-openlane-blue focus:outline-none focus:ring-2 focus:ring-openlane-blue/20;
+  }
+
+  .card {
+    @apply overflow-hidden rounded-lg border border-openlane-border bg-white shadow-sm;
+  }
+
+  .bid-panel-dark {
+    @apply rounded-lg bg-auction-dark text-white shadow-lg;
+  }
+
+  .section-title {
+    @apply text-lg font-bold text-openlane-navy;
+  }
+
+  .filter-chip {
+    @apply shrink-0 rounded-full border border-openlane-border bg-white px-3 py-1.5 text-sm font-medium text-openlane-navy transition hover:border-openlane-blue;
+  }
+
+  .filter-chip-active {
+    @apply border-openlane-blue bg-openlane-blue text-white hover:border-openlane-blue hover:bg-openlane-blue;
+  }
 }

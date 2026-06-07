@@ -102,3 +102,50 @@ export function getVehicleWithBids(id: string, store: BidStore): VehicleWithBids
   if (!v) return null;
   return mergeVehicleWithBids(v, store, vehicles);
 }
+
+export function getRelatedVehicles(
+  vehicleId: string,
+  store: BidStore = {},
+  limit = 4,
+): VehicleWithBids[] {
+  const current = getVehicleById(vehicleId);
+  if (!current) return [];
+
+  const currentPrice = store[current.id]?.currentBid ?? getEffectiveBid(current);
+
+  const scored = vehicles
+    .filter((v) => v.id !== vehicleId)
+    .map((v) => {
+      let score = 0;
+      if (v.make === current.make) score += 3;
+      if (v.body_style === current.body_style) score += 2;
+      if (v.province === current.province) score += 1;
+      const price = store[v.id]?.currentBid ?? getEffectiveBid(v);
+      const priceDiff = Math.abs(price - currentPrice);
+      return { v, score, priceDiff };
+    })
+    .filter(({ score }) => score > 0)
+    .sort((a, b) => b.score - a.score || a.priceDiff - b.priceDiff)
+    .slice(0, limit);
+
+  return scored.map(({ v }) => mergeVehicleWithBids(v, store, vehicles));
+}
+
+export function getFeaturedVehicles(store: BidStore = {}, limit = 8): VehicleWithBids[] {
+  const all = vehicles.map((v) => mergeVehicleWithBids(v, store, vehicles));
+
+  const priority = (v: VehicleWithBids) => {
+    if (v.auction_status === 'live') return 0;
+    if (v.auction_status === 'upcoming') return 1;
+    return 2;
+  };
+
+  return [...all]
+    .sort((a, b) => {
+      const pa = priority(a);
+      const pb = priority(b);
+      if (pa !== pb) return pa - pb;
+      return a.normalized_auction_start.getTime() - b.normalized_auction_start.getTime();
+    })
+    .slice(0, limit);
+}

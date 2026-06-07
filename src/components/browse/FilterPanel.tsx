@@ -25,12 +25,12 @@ function SelectField({
   onChange: (value: string) => void;
 }) {
   return (
-    <div>
-      <label className="mb-1 block text-sm font-medium text-slate-700">{label}</label>
+    <div className="min-w-0">
+      <label className="mb-1 block text-sm font-medium text-openlane-navy">{label}</label>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-[#1a1a2e] focus:outline-none focus:ring-1 focus:ring-[#1a1a2e]"
+        className="input-field"
       >
         <option value="">All</option>
         {options.map((opt) => (
@@ -53,14 +53,14 @@ function NumberField({
   onChange: (value: number | undefined) => void;
 }) {
   return (
-    <div>
-      <label className="mb-1 block text-sm font-medium text-slate-700">{label}</label>
+    <div className="min-w-0">
+      <label className="mb-1 block text-sm font-medium text-openlane-navy">{label}</label>
       <input
         type="number"
         min={0}
         value={value ?? ''}
         onChange={(e) => onChange(e.target.value ? Number(e.target.value) : undefined)}
-        className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-[#1a1a2e] focus:outline-none focus:ring-1 focus:ring-[#1a1a2e]"
+        className="input-field"
       />
     </div>
   );
@@ -71,13 +71,9 @@ export function FilterPanel({ filters, options, onChange, onClear }: FilterPanel
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">Filters</h2>
-        <button
-          type="button"
-          onClick={onClear}
-          className="text-sm text-[#1a1a2e] hover:underline"
-        >
+        <button type="button" onClick={onClear} className="text-sm font-medium text-openlane-blue hover:underline">
           Clear all
         </button>
       </div>

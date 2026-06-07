@@ -36,3 +36,13 @@ export function getEffectiveBid(vehicle: Vehicle): number {
 export function getMinNextBid(effectiveBid: number): number {
   return roundUpToIncrement(effectiveBid + BID_INCREMENT);
 }
+
+export function getVehicleHighlightLine(vehicle: Vehicle): string {
+  const parts = [
+    formatKm(vehicle.odometer_km),
+    `Grade ${vehicle.condition_grade.toFixed(1)}`,
+    vehicle.reserve_price === null ? 'No Reserve' : 'Reserve auction',
+    vehicle.engine,
+  ];
+  return parts.join(' · ');
+}
