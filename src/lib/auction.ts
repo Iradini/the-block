@@ -1,6 +1,7 @@
 import type { AuctionStatus, Vehicle } from '../types/vehicle';
 
 const AUCTION_DURATION_MS = 2 * 60 * 60 * 1000;
+export { AUCTION_DURATION_MS };
 const WINDOW_START_OFFSET_MS = 2 * 60 * 60 * 1000;
 const WINDOW_END_OFFSET_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -78,4 +79,45 @@ export function getAuctionCountdown(
   const hours = Math.floor(diff / (1000 * 60 * 60));
   const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
   return `${hours}h ${mins}m`;
+}
+
+export function getAuctionEndDate(normalizedStart: Date): Date {
+  return new Date(normalizedStart.getTime() + AUCTION_DURATION_MS);
+}
+
+export function formatAuctionEndLabel(status: AuctionStatus, normalizedStart: Date): string {
+  if (status === 'ended') return 'Auction ended';
+
+  const end = getAuctionEndDate(normalizedStart);
+  const formatted = new Intl.DateTimeFormat('en-CA', {
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  }).format(end);
+
+  return status === 'live' ? `Ends ${formatted}` : `Ending ${formatted}`;
+}
+
+export function getRemainingAuctionMs(
+  status: AuctionStatus,
+  normalizedStart: Date,
+  now = Date.now(),
+): number | null {
+  if (status === 'ended') return 0;
+  if (status === 'live') {
+    const end = normalizedStart.getTime() + AUCTION_DURATION_MS;
+    return Math.max(0, end - now);
+  }
+  return null;
+}
+
+export function isAuctionEndingSoon(
+  status: AuctionStatus,
+  normalizedStart: Date,
+  thresholdMs = 60_000,
+  now = Date.now(),
+): boolean {
+  const remaining = getRemainingAuctionMs(status, normalizedStart, now);
+  return remaining !== null && remaining > 0 && remaining <= thresholdMs;
 }

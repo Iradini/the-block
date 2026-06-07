@@ -1,5 +1,6 @@
 import vehiclesData from '../data/vehicles.json';
 import type { Vehicle, VehicleFilters, VehicleSort, VehicleWithBids, BidStore } from '../types/vehicle';
+import { AUCTION_DURATION_MS } from './auction';
 import { mergeVehicleWithBids } from './bids';
 import { getEffectiveBid } from './format';
 
@@ -146,6 +147,31 @@ export function getFeaturedVehicles(store: BidStore = {}, limit = 8): VehicleWit
       const pb = priority(b);
       if (pa !== pb) return pa - pb;
       return a.normalized_auction_start.getTime() - b.normalized_auction_start.getTime();
+    })
+    .slice(0, limit);
+}
+
+export function getEndingSoonVehicles(
+  excludeId: string,
+  store: BidStore = {},
+  limit = 5,
+): VehicleWithBids[] {
+  return vehicles
+    .filter((v) => v.id !== excludeId)
+    .map((v) => mergeVehicleWithBids(v, store, vehicles))
+    .filter((v) => v.auction_status === 'live' || v.auction_status === 'upcoming')
+    .sort((a, b) => {
+      const aEnd =
+        a.auction_status === 'live'
+          ? a.normalized_auction_start.getTime() + AUCTION_DURATION_MS
+          : a.normalized_auction_start.getTime();
+      const bEnd =
+        b.auction_status === 'live'
+          ? b.normalized_auction_start.getTime() + AUCTION_DURATION_MS
+          : b.normalized_auction_start.getTime();
+      if (a.auction_status === 'live' && b.auction_status !== 'live') return -1;
+      if (b.auction_status === 'live' && a.auction_status !== 'live') return 1;
+      return aEnd - bEnd;
     })
     .slice(0, limit);
 }

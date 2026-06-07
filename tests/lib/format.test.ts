@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { getEffectiveBid, getMinNextBid, roundUpToIncrement } from '../../src/lib/format';
+import {
+  getEffectiveBid,
+  getMinNextBid,
+  getVehicleHighlights,
+  getVehicleSubtitle,
+  roundUpToIncrement,
+} from '../../src/lib/format';
 import type { Vehicle } from '../../src/types/vehicle';
 
 const baseVehicle = {
@@ -42,5 +48,20 @@ describe('format', () => {
   it('rounds minimum next bid up to nearest $500', () => {
     expect(roundUpToIncrement(20501)).toBe(21000);
     expect(getMinNextBid(21000)).toBe(21500);
+  });
+
+  it('builds vehicle subtitle with key specs', () => {
+    expect(getVehicleSubtitle(baseVehicle)).toContain('2.3L');
+    expect(getVehicleSubtitle(baseVehicle)).toContain('No Reserve');
+  });
+
+  it('builds highlight bullets from condition and damage notes', () => {
+    const vehicle = {
+      ...baseVehicle,
+      damage_notes: ['Minor scratch on rear bumper'],
+    };
+    const highlights = getVehicleHighlights(vehicle);
+    expect(highlights[0]).toBe('No reserve — highest bid wins');
+    expect(highlights.some((h) => h.includes('scratch'))).toBe(true);
   });
 });

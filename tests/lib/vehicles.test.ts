@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   getAllVehicles,
+  getEndingSoonVehicles,
   getRelatedVehicles,
   getVehicleById,
   searchVehicles,
@@ -41,5 +42,16 @@ describe('vehicles', () => {
           v.province === vehicle.province,
       ),
     ).toBe(true);
+  });
+
+  it('returns live and upcoming vehicles sorted by ending time', () => {
+    const vehicle = getAllVehicles()[0];
+    const endingSoon = getEndingSoonVehicles(vehicle.id, {}, 5);
+
+    expect(endingSoon.length).toBeGreaterThan(0);
+    expect(endingSoon.every((v) => v.id !== vehicle.id)).toBe(true);
+    expect(endingSoon.every((v) => v.auction_status === 'live' || v.auction_status === 'upcoming')).toBe(
+      true,
+    );
   });
 });

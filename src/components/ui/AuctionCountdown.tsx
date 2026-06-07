@@ -7,6 +7,7 @@ interface AuctionCountdownProps {
   normalizedStart: Date;
   className?: string;
   liveClassName?: string;
+  urgent?: boolean;
 }
 
 export function AuctionCountdown({
@@ -14,6 +15,7 @@ export function AuctionCountdown({
   normalizedStart,
   className = '',
   liveClassName = 'text-red-400 font-mono font-semibold',
+  urgent = false,
 }: AuctionCountdownProps) {
   const [label, setLabel] = useState(() =>
     getAuctionCountdown(status, normalizedStart),
@@ -32,6 +34,10 @@ export function AuctionCountdown({
   const isLive = status === 'live';
 
   return (
-    <span className={`${className} ${isLive ? liveClassName : ''}`}>{label}</span>
+    <span
+      className={`${className} ${isLive ? liveClassName : ''} ${urgent && isLive ? 'animate-pulse' : ''}`}
+    >
+      {label}
+    </span>
   );
 }

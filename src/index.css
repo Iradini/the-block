@@ -64,12 +64,28 @@ body {
     @apply overflow-hidden rounded-lg border border-openlane-border bg-white shadow-sm;
   }
 
+  .auction-action-bar {
+    @apply border-y border-openlane-border bg-white text-openlane-navy shadow-sm lg:border lg:rounded-lg;
+  }
+
+  .bid-panel-light {
+    @apply rounded-lg border border-openlane-border bg-white text-openlane-navy shadow-md;
+  }
+
   .bid-panel-dark {
     @apply rounded-lg bg-auction-dark text-white shadow-lg;
   }
 
   .section-title {
-    @apply text-lg font-bold text-openlane-navy;
+    @apply text-xl font-bold tracking-tight text-openlane-navy;
+  }
+
+  .spec-label {
+    @apply text-xs font-semibold uppercase tracking-wide text-slate-600;
+  }
+
+  .spec-value {
+    @apply text-base font-bold capitalize text-openlane-navy;
   }
 
   .filter-chip {

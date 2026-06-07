@@ -46,3 +46,38 @@ export function getVehicleHighlightLine(vehicle: Vehicle): string {
   ];
   return parts.join(' · ');
 }
+
+function capitalize(value: string): string {
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
+export function getVehicleSubtitle(vehicle: Vehicle): string {
+  return [
+    vehicle.engine,
+    capitalize(vehicle.transmission),
+    vehicle.drivetrain,
+    formatKm(vehicle.odometer_km),
+    vehicle.reserve_price === null ? 'No Reserve' : 'Reserve auction',
+  ].join(' · ');
+}
+
+export function getVehicleHighlights(vehicle: Vehicle): string[] {
+  const bullets: string[] = [];
+
+  if (vehicle.reserve_price === null) {
+    bullets.push('No reserve — highest bid wins');
+  }
+
+  const sentences = vehicle.condition_report
+    .split(/(?<=[.!])\s+/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+  bullets.push(...sentences.slice(0, 2));
+  bullets.push(...vehicle.damage_notes.slice(0, 3));
+
+  if (bullets.length === 0) {
+    bullets.push('Condition report available below');
+  }
+
+  return [...new Set(bullets)].slice(0, 6);
+}
