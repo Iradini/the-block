@@ -22,6 +22,8 @@ export function getFilterOptions() {
 }
 
 const knownMakes = [...new Set(vehicles.map((v) => v.make))];
+const knownCities = [...new Set(vehicles.map((v) => v.city))];
+const knownProvinces = [...new Set(vehicles.map((v) => v.province))];
 
 function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -54,6 +56,17 @@ function matchesSearchQuery(v: Vehicle, query: string): boolean {
     if (matchedMake) {
       return v.make === matchedMake;
     }
+
+    const matchedCity = knownCities.find((city) => city.toLowerCase() === term);
+    if (matchedCity) {
+      return v.city === matchedCity;
+    }
+
+    const matchedProvince = knownProvinces.find((province) => province.toLowerCase() === term);
+    if (matchedProvince) {
+      return v.province === matchedProvince;
+    }
+
     return searchFields(v).some((field) => fieldMatchesTerm(field, term));
   });
 }

@@ -1,14 +1,26 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
 import { mergeVehicleWithBids, placeBid } from '../../src/lib/bids';
-import { getAllVehicles } from '../../src/lib/vehicles';
+import {
+  fixtureVehicles,
+  FIXED_NOW,
+  liveVehicle,
+} from '../fixtures/vehicles';
+import { mockAuctionStartFromVehicleField } from '../helpers/mockAuction';
 
 describe('bids', () => {
-  const vehicles = getAllVehicles();
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(FIXED_NOW);
+    mockAuctionStartFromVehicleField();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
 
   it('rejects bids below minimum increment', () => {
-    const vehicle = vehicles.find((v) => v.auction_start)!;
-    const merged = mergeVehicleWithBids(vehicle, {}, vehicles);
-    const result = placeBid(vehicle.id, merged.min_next_bid - 1, vehicles, {});
+    const merged = mergeVehicleWithBids(liveVehicle, {}, fixtureVehicles);
+    const result = placeBid(liveVehicle.id, merged.min_next_bid - 1, fixtureVehicles, {});
 
     expect(result.ok).toBe(false);
     if (!result.ok) {
@@ -17,9 +29,7 @@ describe('bids', () => {
   });
 
   it('rejects non-integer bid amounts', () => {
-    const vehicle = vehicles[0];
-    const result = placeBid(vehicle.id, 100.5, vehicles, {});
-
+    const result = placeBid(liveVehicle.id, 100.5, fixtureVehicles, {});
     expect(result.ok).toBe(false);
     if (!result.ok) {
       expect(result.error).toBe('INVALID_AMOUNT');
@@ -27,15 +37,14 @@ describe('bids', () => {
   });
 
   it('updates bid state on valid bid', () => {
-    const vehicle = vehicles.find((v) => v.current_bid !== null) ?? vehicles[0];
-    const merged = mergeVehicleWithBids(vehicle, {}, vehicles);
-    if (merged.auction_status === 'ended') return;
+    const merged = mergeVehicleWithBids(liveVehicle, {}, fixtureVehicles);
+    expect(merged.auction_status).toBe('live');
 
-    const result = placeBid(vehicle.id, merged.min_next_bid, vehicles, {});
+    const result = placeBid(liveVehicle.id, merged.min_next_bid, fixtureVehicles, {});
     expect(result.ok).toBe(true);
     if (result.ok) {
       expect(result.vehicle.effective_bid).toBe(merged.min_next_bid);
-      expect(result.vehicle.bid_count).toBe(vehicle.bid_count + 1);
+      expect(result.vehicle.bid_count).toBe(1);
       expect(result.vehicle.my_bids).toContain(merged.min_next_bid);
     }
   });

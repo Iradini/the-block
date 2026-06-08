@@ -32,6 +32,10 @@ export function getNormalizedAuctionStart(vehicle: Vehicle, allVehicles: Vehicle
   return normalizedMap.get(vehicle.id) ?? new Date(vehicle.auction_start);
 }
 
+export function resetNormalizedAuctionCache(): void {
+  normalizedMap = null;
+}
+
 export function getAuctionStatus(normalizedStart: Date, now = new Date()): AuctionStatus {
   const start = normalizedStart.getTime();
   const end = start + AUCTION_DURATION_MS;
